@@ -5,13 +5,14 @@ use Workerman\Worker;
 require './Autoloader.php';
 
 $socket = new Worker('websocket://0.0.0.0:8888');
+$socket->count = 1;
 
-$socket->users = [];
+$socket->weiwait_connections = [];
 
 $socket->onMessage = function ($connection, $data) use ($socket) {
     if (!isset($connection->uid)) {
         $connection->uid = $data;
-        $socket->users[$data] = $connection;
+        $socket->weiwait_connections[$data] = $connection;
         $connection->send('your uid is:  ' . $data);
         return;
     }
@@ -25,7 +26,7 @@ $socket->onMessage = function ($connection, $data) use ($socket) {
 
 $socket->onClose = function ($connection) use ($socket) {
     if (isset($connection->uid)) {
-        unset($socket->users[$connection->uid]);
+        unset($socket->weiwait_connections[$connection->uid]);
     }
 };
 
